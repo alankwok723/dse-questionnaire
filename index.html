@@ -923,7 +923,7 @@ King Fortune Consulting Service HK Co., Limited
     const data = collectData();
 
     try {
-      await emailjs.send("service_alankwok0723", "template_kloq0i4", {
+      await emailjs.send("alankwok0723", "template_kloq0i4", {
         student_name: data.name || '新学生',
         wechat: data.wechat || '—',
         email_body: buildEmailBody(data)
