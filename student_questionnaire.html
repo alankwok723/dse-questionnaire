@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学生背景问卷 · King Fortune Consulting</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+  :root {
+    --navy: #1B3A6B;
+    --gold: #C9A84C;
+    --gold-light: #F5E6C0;
+    --cream: #FAF8F3;
+    --white: #FFFFFF;
+    --text: #1a1a2e;
+    --text-muted: #6b7280;
+    --border: #e5e0d5;
+    --success: #2d6a4f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--navy);
+    padding: 48px 24px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 240px; height: 240px;
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 50%;
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -40px;
+    width: 180px; height: 180px;
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 50%;
+  }
+
+  .logo-line {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+
+  .header h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(22px, 5vw, 30px);
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.4;
+    margin-bottom: 12px;
+  }
+
+  .header p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 300;
+    max-width: 400px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .gold-bar {
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin-top: 32px;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-wrap {
+    background: var(--white);
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--navy), var(--gold));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* ── FORM CONTAINER ── */
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    background: var(--white);
+    border-radius: 16px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 16px rgba(27,58,107,0.05);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .section:nth-child(1) { animation-delay: 0.05s; }
+  .section:nth-child(2) { animation-delay: 0.1s; }
+  .section:nth-child(3) { animation-delay: 0.15s; }
+  .section:nth-child(4) { animation-delay: 0.2s; }
+  .section:nth-child(5) { animation-delay: 0.25s; }
+  .section:nth-child(6) { animation-delay: 0.3s; }
+  .section:nth-child(7) { animation-delay: 0.35s; }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    background: var(--navy);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-num {
+    width: 28px; height: 28px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .section-body {
+    padding: 24px;
+  }
+
+  /* ── FIELDS ── */
+  .field {
+    margin-bottom: 20px;
+  }
+
+  .field:last-child { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--navy);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  label .required {
+    color: var(--gold);
+    margin-left: 3px;
+  }
+
+  label .hint {
+    display: block;
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--cream);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--navy);
+    box-shadow: 0 0 0 3px rgba(27,58,107,0.08);
+    background: var(--white);
+  }
+
+  textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231B3A6B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+    cursor: pointer;
+  }
+
+  /* ── RADIO / CHECKBOX ── */
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .option-item {
+    position: relative;
+  }
+
+  .option-item input {
+    position: absolute;
+    opacity: 0;
+    width: 0; height: 0;
+  }
+
+  .option-item label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text);
+    margin: 0;
+    transition: all 0.15s;
+    background: var(--cream);
+    user-select: none;
+  }
+
+  .option-item input:checked + label {
+    border-color: var(--navy);
+    background: rgba(27,58,107,0.05);
+    color: var(--navy);
+    font-weight: 500;
+  }
+
+  .option-item label::before {
+    content: '';
+    width: 16px; height: 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    background: var(--white);
+  }
+
+  .option-item input[type="checkbox"] + label::before {
+    border-radius: 4px;
+  }
+
+  .option-item input:checked + label::before {
+    background: var(--navy);
+    border-color: var(--navy);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8' viewBox='0 0 10 8'%3E%3Cpath d='M1 4l3 3 5-6' stroke='white' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  /* ── SCORE GRID ── */
+  .score-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .score-row input {
+    flex: 1;
+  }
+
+  .score-divider {
+    color: var(--text-muted);
+    font-size: 18px;
+    font-weight: 300;
+    flex-shrink: 0;
+  }
+
+  /* ── SUBMIT ── */
+  .submit-wrap {
+    padding: 8px 0 0;
+  }
+
+  .submit-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  .btn-submit {
+    width: 100%;
+    padding: 16px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 12px;
+    font-family: 'Noto Serif SC', serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-submit::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--gold);
+  }
+
+  .btn-submit:hover {
+    background: #142d56;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(27,58,107,0.25);
+  }
+
+  .btn-submit:active { transform: translateY(0); }
+  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  /* ── SUCCESS ── */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 80px 24px;
+  }
+
+  .success-icon {
+    width: 72px; height: 72px;
+    background: var(--navy);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+  }
+
+  .success-icon svg { width: 32px; height: 32px; }
+
+  .success-screen h2 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 22px;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+
+  .success-screen p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+
+  .gold-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    margin: 24px auto;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    padding: 24px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+
+  .footer span { color: var(--gold); }
+
+  /* ── ERROR ── */
+  .error-msg {
+    font-size: 12px;
+    color: #dc2626;
+    margin-top: 6px;
+    display: none;
+  }
+
+  .field.has-error input,
+  .field.has-error select,
+  .field.has-error textarea {
+    border-color: #dc2626;
+  }
+
+  .field.has-error .error-msg { display: block; }
+
+  @media (max-width: 480px) {
+    .options-grid { grid-template-columns: 1fr 1fr; }
+    .section-body { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-line">King Fortune Consulting HK</div>
+  <h1>学生背景信息问卷</h1>
+  <p>请如实填写以下信息，顾问将根据您的情况为您制定个性化的留学方案。</p>
+  <div class="gold-bar"></div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span id="progress-text">填写进度</span>
+    <span id="progress-pct">0%</span>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress-fill"></div>
+  </div>
+</div>
+
+<div class="container">
+  <form id="questionnaire" novalidate>
+
+    <!-- A. 基本信息 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">A</div>
+        <div class="section-title">基本信息</div>
+      </div>
+      <div class="section-body">
+        <div class="field" data-required>
+          <label>姓名 <span class="required">*</span></label>
+          <input type="text" name="name" placeholder="请输入您的姓名">
+          <div class="error-msg">请填写姓名</div>
+        </div>
+        <div class="field" data-required>
+          <label>微信号 <span class="required">*</span></label>
+          <input type="text" name="wechat" placeholder="请输入微信号">
+          <div class="error-msg">请填写微信号</div>
+        </div>
+        <div class="field">
+          <label>手机号码
+            <span class="hint">选填，方便顾问联系</span>
+          </label>
+          <input type="tel" name="phone" placeholder="例：+86 138 0000 0000">
+        </div>
+        <div class="field">
+          <label>您是如何了解到我们的？</label>
+          <div class="options-grid">
+            <div class="option-item"><input type="radio" name="source" id="s1" value="朋友介绍"><label for="s1">朋友介绍</label></div>
+            <div class="option-item"><input type="radio" name="source" id="s2" value="雅思课学生"><label for="s2">雅思课学生</label></div>
+            <div class="option-item"><input type="radio" name="source" id="s3" value="小红书"><label for="s3">小红书</label></div>
+            <div class="option-item"><input type="radio" name="source" id="s4" value="其他"><label for="s4">其他</label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B. 学术背景 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">B</div>
+        <div class="section-title">学术背景</div>
+      </div>
+      <div class="section-body">
+        <div class="field" data-required>
+          <label>就读/毕业院校 <span class="required">*</span></label>
+          <input type="text" name="university" placeholder="例：北京大学">
+          <div class="error-msg">请填写院校名称</div>
+        </div>
+        <div class="field" data-required>
+          <label>就读专业 <span class="required">*</span></label>
+          <input type="text" name="major" placeholder="例：金融学">
+          <div class="error-msg">请填写专业</div>
+        </div>
+        <div class="field">
+          <label>当前状态</label>
+          <div class="options-grid">
+            <div class="option-item"><input type="radio" name="status" id="st1" value="大一"><label for="st1">大一</label></div>
+            <div class="option-item"><input type="radio" name="status" id="st2" value="大二"><label for="st2">大二</label></div>
+            <div class="option-item"><input type="radio" name="status" id="st3" value="大三"><label for="st3">大三</label></div>
+            <div class="option-item"><input type="radio" name="status" id="st4" value="大四"><label for="st4">大四</label></div>
+            <div class="option-item"><input type="radio" name="status" id="st5" value="已毕业"><label for="st5">已毕业</label></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>GPA / 成绩
+            <span class="hint">请注明满分制，例：3.7 / 4.0，或均分 88 / 100</span>
+          </label>
+          <div class="score-row">
+            <input type="text" name="gpa_score" placeholder="您的成绩">
+            <div class="score-divider">/</div>
+            <input type="text" name="gpa_total" placeholder="满分">
+          </div>
+        </div>
+        <div class="field">
+          <label>年级 / 专业排名（选填）</label>
+          <input type="text" name="ranking" placeholder="例：前10%，或 15/200">
+        </div>
+        <div class="field">
+          <label>有无交换经历 / 荣誉奖项</label>
+          <textarea name="honors" placeholder="如有请简要描述，没有可跳过"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- C. 语言成绩 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">C</div>
+        <div class="section-title">语言成绩</div>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label>雅思成绩
+            <span class="hint">已考请填写各项分数</span>
+          </label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+            <input type="text" name="ielts_total" placeholder="总分（如 7.0）">
+            <input type="text" name="ielts_l" placeholder="听力 L">
+            <input type="text" name="ielts_r" placeholder="阅读 R">
+            <input type="text" name="ielts_w" placeholder="写作 W">
+            <input type="text" name="ielts_s" placeholder="口语 S">
+          </div>
+        </div>
+        <div class="field">
+          <label>托福成绩（如有）</label>
+          <input type="text" name="toefl" placeholder="例：105">
+        </div>
+        <div class="field">
+          <label>计划考试时间（如尚未考）</label>
+          <input type="text" name="exam_plan" placeholder="例：2024年9月">
+        </div>
+      </div>
+    </div>
+
+    <!-- D. 实习与经历 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">D</div>
+        <div class="section-title">实习与课外经历</div>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label>实习经历
+            <span class="hint">请列出公司名称、职位及时长</span>
+          </label>
+          <textarea name="internship" placeholder="例：高盛（香港）投资银行部实习生，3个月&#10;如无实习经历请填写「无」"></textarea>
+        </div>
+        <div class="field">
+          <label>科研 / 论文经历</label>
+          <textarea name="research" placeholder="如有请简要描述，没有可跳过"></textarea>
+        </div>
+        <div class="field">
+          <label>社团 / 志愿者 / 竞赛</label>
+          <textarea name="activities" placeholder="如有请简要描述"></textarea>
+        </div>
+        <div class="field">
+          <label>其他您认为重要的经历</label>
+          <textarea name="other_exp" placeholder="任何您觉得值得一提的经历都可以写在这里"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- E. 申请意向 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">E</div>
+        <div class="section-title">申请意向</div>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label>目标国家 / 地区（可多选）</label>
+          <div class="options-grid">
+            <div class="option-item"><input type="checkbox" name="country" id="c1" value="英国"><label for="c1">英国</label></div>
+            <div class="option-item"><input type="checkbox" name="country" id="c2" value="美国"><label for="c2">美国</label></div>
+            <div class="option-item"><input type="checkbox" name="country" id="c3" value="香港"><label for="c3">香港</label></div>
+            <div class="option-item"><input type="checkbox" name="country" id="c4" value="新加坡"><label for="c4">新加坡</label></div>
+            <div class="option-item"><input type="checkbox" name="country" id="c5" value="澳洲"><label for="c5">澳洲</label></div>
+            <div class="option-item"><input type="checkbox" name="country" id="c6" value="其他"><label for="c6">其他</label></div>
+          </div>
+        </div>
+        <div class="field" data-required>
+          <label>目标申请学位 <span class="required">*</span></label>
+          <select name="degree">
+            <option value="">请选择</option>
+            <option>硕士（授课型）</option>
+            <option>硕士（研究型）</option>
+            <option>博士</option>
+            <option>本科</option>
+          </select>
+          <div class="error-msg">请选择申请学位</div>
+        </div>
+        <div class="field" data-required>
+          <label>目标专业方向 <span class="required">*</span></label>
+          <input type="text" name="target_major" placeholder="例：金融、数据科学、教育管理">
+          <div class="error-msg">请填写目标专业方向</div>
+        </div>
+        <div class="field">
+          <label>心仪院校（如有）
+            <span class="hint">填写您理想中的学校，没有特定想法也可以留空</span>
+          </label>
+          <textarea name="target_schools" placeholder="例：伦敦政治经济学院、香港大学、新加坡国立大学"></textarea>
+        </div>
+        <div class="field">
+          <label>计划入学时间</label>
+          <div class="options-grid">
+            <div class="option-item"><input type="radio" name="entry" id="e1" value="2025年秋季"><label for="e1">2025年秋</label></div>
+            <div class="option-item"><input type="radio" name="entry" id="e2" value="2026年秋季"><label for="e2">2026年秋</label></div>
+            <div class="option-item"><input type="radio" name="entry" id="e3" value="2027年及以后"><label for="e3">2027年+</label></div>
+            <div class="option-item"><input type="radio" name="entry" id="e4" value="未确定"><label for="e4">未确定</label></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>专业方向是否明确？</label>
+          <div class="options-grid">
+            <div class="option-item"><input type="radio" name="clarity" id="cl1" value="非常明确"><label for="cl1">非常明确</label></div>
+            <div class="option-item"><input type="radio" name="clarity" id="cl2" value="大方向有，细节未定"><label for="cl2">大方向有</label></div>
+            <div class="option-item"><input type="radio" name="clarity" id="cl3" value="还不确定，需要建议"><label for="cl3">需要建议</label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- F. 实际条件 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">F</div>
+        <div class="section-title">实际条件</div>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label>年预算范围（学费+生活费）</label>
+          <div class="options-grid">
+            <div class="option-item"><input type="radio" name="budget" id="b1" value="30万以内"><label for="b1">30万以内</label></div>
+            <div class="option-item"><input type="radio" name="budget" id="b2" value="30–50万"><label for="b2">30–50万</label></div>
+            <div class="option-item"><input type="radio" name="budget" id="b3" value="50万以上"><label for="b3">50万以上</label></div>
+            <div class="option-item"><input type="radio" name="budget" id="b4" value="不限"><label for="b4">不限</label></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>奖学金需求</label>
+          <div class="options-grid">
+            <div class="option-item"><input type="radio" name="scholarship" id="sc1" value="必须获得奖学金"><label for="sc1">必须获得</label></div>
+            <div class="option-item"><input type="radio" name="scholarship" id="sc2" value="最好有奖学金"><label for="sc2">最好有</label></div>
+            <div class="option-item"><input type="radio" name="scholarship" id="sc3" value="不需要奖学金"><label for="sc3">不需要</label></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>决策人</label>
+          <div class="options-grid">
+            <div class="option-item"><input type="radio" name="decision" id="d1" value="学生本人决定"><label for="d1">我自己</label></div>
+            <div class="option-item"><input type="radio" name="decision" id="d2" value="家长主导"><label for="d2">家长主导</label></div>
+            <div class="option-item"><input type="radio" name="decision" id="d3" value="共同决定"><label for="d3">共同决定</label></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>之前是否接触过其他留学中介或顾问？</label>
+          <div class="options-grid">
+            <div class="option-item"><input type="radio" name="prev_agent" id="pa1" value="没有"><label for="pa1">没有</label></div>
+            <div class="option-item"><input type="radio" name="prev_agent" id="pa2" value="有，但不满意"><label for="pa2">有，不满意</label></div>
+            <div class="option-item"><input type="radio" name="prev_agent" id="pa3" value="有，仅作参考"><label for="pa3">仅作参考</label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- G. 补充信息 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">G</div>
+        <div class="section-title">补充信息</div>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label>您最希望顾问帮助您解决什么问题？</label>
+          <textarea name="main_concern" placeholder="例如：我不确定自己的背景能申请到哪些学校；我的GPA不高但实习经历丰富，不知道怎么包装；我对专业方向还很迷茫……"></textarea>
+        </div>
+        <div class="field">
+          <label>还有什么您想让顾问了解的？</label>
+          <textarea name="extra" placeholder="任何您认为重要的信息都可以写在这里"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="submit-wrap">
+      <p class="submit-note">提交后，顾问将在 1–2 个工作日内通过微信与您联系，为您安排初次咨询。</p>
+      <button type="submit" class="btn-submit" id="submit-btn">提交问卷</button>
+    </div>
+
+  </form>
+
+  <!-- SUCCESS -->
+  <div class="success-screen" id="success">
+    <div class="success-icon">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 16l8 8 12-14" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h2>问卷已成功提交</h2>
+    <div class="gold-dot"></div>
+    <p>感谢您的信任。顾问已收到您的信息，将在 1–2 个工作日内通过微信与您联系，为您安排初次咨询。</p>
+    <br>
+    <p style="font-size:13px; color:#9ca3af;">King Fortune Consulting Service HK Co., Limited</p>
+  </div>
+</div>
+
+<div class="footer">
+  <span>King Fortune Consulting HK</span> · 学员录取涵盖 G5 · 港三 · NUS · 藤校 · ETH Zürich
+</div>
+
+<script>
+  // Init EmailJS
+  emailjs.init("K5wyNQ-J6kMPA5y7r");
+
+  // Progress tracking
+  const form = document.getElementById('questionnaire');
+  const allInputs = form.querySelectorAll('input, select, textarea');
+  const fill = document.getElementById('progress-fill');
+  const pct = document.getElementById('progress-pct');
+
+  function updateProgress() {
+    let filled = 0;
+    const seen = new Set();
+    allInputs.forEach(el => {
+      if (el.type === 'radio' || el.type === 'checkbox') {
+        if (!seen.has(el.name)) {
+          seen.add(el.name);
+          const group = form.querySelectorAll(`input[name="${el.name}"]`);
+          const checked = [...group].some(r => r.checked);
+          if (checked) filled++;
+        }
+      } else {
+        if (el.value.trim()) filled++;
+      }
+    });
+    const unique = new Set([...allInputs].map(el =>
+      (el.type === 'radio' || el.type === 'checkbox') ? el.name : el.name + '_single'
+    ));
+    const total = unique.size;
+    const p = Math.round((filled / total) * 100);
+    fill.style.width = p + '%';
+    pct.textContent = p + '%';
+  }
+
+  allInputs.forEach(el => el.addEventListener('change', updateProgress));
+  allInputs.forEach(el => el.addEventListener('input', updateProgress));
+
+  // Validation
+  function validateRequired() {
+    let valid = true;
+    form.querySelectorAll('[data-required]').forEach(field => {
+      const input = field.querySelector('input, select, textarea');
+      if (!input || !input.value.trim()) {
+        field.classList.add('has-error');
+        valid = false;
+      } else {
+        field.classList.remove('has-error');
+      }
+    });
+    return valid;
+  }
+
+  // Collect all form data
+  function collectData() {
+    const data = {};
+    const checkboxGroups = {};
+
+    allInputs.forEach(el => {
+      if (!el.name) return;
+      if (el.type === 'radio') {
+        if (el.checked) data[el.name] = el.value;
+      } else if (el.type === 'checkbox') {
+        if (!checkboxGroups[el.name]) checkboxGroups[el.name] = [];
+        if (el.checked) checkboxGroups[el.name].push(el.value);
+      } else {
+        data[el.name] = el.value.trim();
+      }
+    });
+
+    Object.entries(checkboxGroups).forEach(([k, v]) => {
+      data[k] = v.join('、') || '未选择';
+    });
+
+    return data;
+  }
+
+  // Build email body
+  function buildEmailBody(d) {
+    return `
+【新学生问卷提交】
+提交时间：${new Date().toLocaleString('zh-CN')}
+
+━━━━━━━━━━━━━━━━━━━━━
+A. 基本信息
+━━━━━━━━━━━━━━━━━━━━━
+姓名：${d.name || '—'}
+微信号：${d.wechat || '—'}
+手机：${d.phone || '—'}
+信息来源：${d.source || '—'}
+
+━━━━━━━━━━━━━━━━━━━━━
+B. 学术背景
+━━━━━━━━━━━━━━━━━━━━━
+院校：${d.university || '—'}
+专业：${d.major || '—'}
+状态：${d.status || '—'}
+GPA：${d.gpa_score || '—'} / ${d.gpa_total || '—'}
+排名：${d.ranking || '—'}
+荣誉/交换：${d.honors || '—'}
+
+━━━━━━━━━━━━━━━━━━━━━
+C. 语言成绩
+━━━━━━━━━━━━━━━━━━━━━
+雅思总分：${d.ielts_total || '—'}
+L：${d.ielts_l || '—'}  R：${d.ielts_r || '—'}  W：${d.ielts_w || '—'}  S：${d.ielts_s || '—'}
+托福：${d.toefl || '—'}
+计划考试：${d.exam_plan || '—'}
+
+━━━━━━━━━━━━━━━━━━━━━
+D. 实习与经历
+━━━━━━━━━━━━━━━━━━━━━
+实习经历：${d.internship || '—'}
+科研/论文：${d.research || '—'}
+社团/竞赛：${d.activities || '—'}
+其他经历：${d.other_exp || '—'}
+
+━━━━━━━━━━━━━━━━━━━━━
+E. 申请意向
+━━━━━━━━━━━━━━━━━━━━━
+目标国家：${d.country || '—'}
+申请学位：${d.degree || '—'}
+目标专业：${d.target_major || '—'}
+心仪院校：${d.target_schools || '—'}
+计划入学：${d.entry || '—'}
+方向明确度：${d.clarity || '—'}
+
+━━━━━━━━━━━━━━━━━━━━━
+F. 实际条件
+━━━━━━━━━━━━━━━━━━━━━
+预算范围：${d.budget || '—'}
+奖学金需求：${d.scholarship || '—'}
+决策人：${d.decision || '—'}
+曾接触中介：${d.prev_agent || '—'}
+
+━━━━━━━━━━━━━━━━━━━━━
+G. 补充信息
+━━━━━━━━━━━━━━━━━━━━━
+最希望解决：${d.main_concern || '—'}
+其他补充：${d.extra || '—'}
+
+━━━━━━━━━━━━━━━━━━━━━
+King Fortune Consulting Service HK Co., Limited
+    `.trim();
+  }
+
+  // Submit
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    if (!validateRequired()) {
+      const firstError = form.querySelector('.has-error');
+      if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = '提交中…';
+
+    const data = collectData();
+
+    try {
+      await emailjs.send("service_alankwok0723", "template_kloq0i4", {
+        student_name: data.name || '新学生',
+        wechat: data.wechat || '—',
+        email_body: buildEmailBody(data)
+      });
+
+      form.style.display = 'none';
+      document.getElementById('success').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = '提交问卷';
+      alert('提交失败，请检查网络后重试。错误：' + JSON.stringify(err));
+    }
+  });
+</script>
+</body>
+</html>
